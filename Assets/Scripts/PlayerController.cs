@@ -32,6 +32,6 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         Vector3 dir = new Vector3(moveInput.x, 0f, moveInput.y);
-        transform.Translate(dir * moveSpeed * Time.deltaTime);
+        transform.Translate(dir * moveSpeed * Time.deltaTime, Space.World);
     }
 }
