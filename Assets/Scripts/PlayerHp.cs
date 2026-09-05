@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System;
 using System.Collections;
 
 public class PlayerHp : MonoBehaviour
@@ -11,10 +12,16 @@ public class PlayerHp : MonoBehaviour
     public float consumePerSecond = 10f;
     private bool isCharging = false;
     private float chargingTime;
-    private float swingSpeed = 0.3f;
 
-    public GameObject sword;
-    private Vector3 swordScaleOffset = new Vector3(0.3f, 0.3f, 0.3f);
+    public float chargeDamage = 0f;
+
+    public event Action<float> OnPlayerSwing;
+    public event Action<float> OnPlayerCharging;
+
+    private bool isUnbeatable = false;
+
+    public float unbeatableTime = 1f;
+    private float unbeatableTimer = 0f;
 
     private void OnEnable()
     {
@@ -38,7 +45,6 @@ public class PlayerHp : MonoBehaviour
 
     private void StartBloodSword(InputAction.CallbackContext ctx)
     {
-        sword.transform.localScale = swordScaleOffset;
         isCharging = true;
     }
 
@@ -46,24 +52,10 @@ public class PlayerHp : MonoBehaviour
     {
         isCharging = false;
         Debug.Log($"Charging Time : {chargingTime}");
-        StartCoroutine(SwingCoroutine(0.2f));
-    }
-
-    IEnumerator SwingCoroutine(float rotateSpeed)
-    {
-        float startAngle = transform.localEulerAngles.y;
-        float endAngle = startAngle - 180f;
-        float time = 0f;
-        while (time < swingSpeed)
-        {
-            time += Time.deltaTime;
-            float currentAngle = Mathf.Lerp(startAngle, endAngle, time / rotateSpeed);
-            transform.localRotation = Quaternion.Euler(new Vector3(0f, currentAngle, 0f));
-            yield return null;
-        }
-        sword.transform.localScale = swordScaleOffset;
-        sword.transform.localPosition = new Vector3(swordScaleOffset.x / 2, 0f, 0f);
+        chargeDamage = chargingTime * 2f;
+        OnPlayerSwing?.Invoke(chargeDamage);
         chargingTime = 0;
+        chargeDamage = 0f;
     }
 
     private void Update()
@@ -72,16 +64,36 @@ public class PlayerHp : MonoBehaviour
         {
             chargingTime += consumePerSecond * Time.deltaTime;
             hp -= consumePerSecond * Time.deltaTime;
-            Vector3 swordScale = new Vector3(chargingTime, swordScaleOffset.y, swordScaleOffset.z);
-            sword.transform.localScale = swordScale;
-            Vector3 swordPos = sword.transform.localPosition;
-            Vector3 movePos = new Vector3(chargingTime / 2, swordPos.y, swordPos.z);
-            sword.transform.localPosition = movePos;
+            OnPlayerCharging?.Invoke(chargingTime);
+
         }
 
-        if(hp <= 0)
+        if (hp <= 0)
         {
             Debug.Log("Game Over");
+        }
+
+        if (isUnbeatable)
+        {
+            unbeatableTimer += Time.deltaTime;
+            if (unbeatableTimer >= unbeatableTime)
+            {
+                isUnbeatable = false;
+                unbeatableTimer = 0f;
+            }
+        }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Weapon"))
+        {
+            hp -= other.GetComponent<AttackController>().damage;
+            isUnbeatable = true;
+            if (hp <= 0f)
+            {
+                Debug.Log("Game Over");
+            }
         }
     }
 }
