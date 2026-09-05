@@ -6,6 +6,8 @@ public class PlayerWeapon : MonoBehaviour
     public float damage = 0f;
     public float rotateSpeed = 0.2f;
 
+    private bool isRightSwing = true;
+
     private float swingSpeed = 0.3f;
 
     public PlayerHp playerHp;
@@ -37,7 +39,17 @@ public class PlayerWeapon : MonoBehaviour
     IEnumerator SwingCoroutine(float duration)
     {
         float startAngle = swordHandle.transform.localEulerAngles.y;
-        float endAngle = startAngle - 180f;
+        float endAngle = startAngle + 180f;
+        if (isRightSwing)
+        {
+            endAngle = startAngle - 180f;
+            isRightSwing = false;
+        }
+        else
+        {
+            isRightSwing = true;
+        }
+
         float time = 0f;
         while (time < swingSpeed)
         {
