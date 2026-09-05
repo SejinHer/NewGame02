@@ -4,6 +4,7 @@ public class Enemy : MonoBehaviour
 {
     public GameObject target;
     public float moveSpeed;
+    public float chaseDistance = 2f;
 
     void Awake()
     {
@@ -13,7 +14,9 @@ public class Enemy : MonoBehaviour
     void Update()
     {
         Vector3 dir = target.transform.position - transform.position;
-
-        transform.Translate(dir.normalized * moveSpeed * Time.deltaTime);
+        if(dir.magnitude > chaseDistance)
+        {
+            transform.Translate(dir.normalized * moveSpeed * Time.deltaTime);
+        }
     }
 }
