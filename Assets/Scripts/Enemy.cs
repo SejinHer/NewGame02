@@ -39,7 +39,7 @@ public class Enemy : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("PlayerWeapon"))
+        if (other.CompareTag("PlayerWeapon") && other.GetComponent<PlayerWeapon>().IsSwing)
         {
             health -= other.GetComponent<PlayerWeapon>().damage;
             if (health <= 0f)

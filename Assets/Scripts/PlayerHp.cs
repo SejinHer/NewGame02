@@ -63,7 +63,7 @@ public class PlayerHp : MonoBehaviour
         if (isCharging)
         {
             chargingTime += consumePerSecond * Time.deltaTime;
-            hp -= consumePerSecond * Time.deltaTime;
+            //hp -= consumePerSecond * Time.deltaTime;
             OnPlayerCharging?.Invoke(chargingTime);
 
         }

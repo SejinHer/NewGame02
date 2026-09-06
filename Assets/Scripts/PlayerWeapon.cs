@@ -1,12 +1,20 @@
-using UnityEngine;
 using System.Collections;
+using System.Reflection;
+using UnityEngine;
 
 public class PlayerWeapon : MonoBehaviour
 {
     public float damage = 0f;
     public float rotateSpeed = 0.2f;
+    public float limitScale = 10f;
 
     private bool isRightSwing = true;
+    private bool isSwing = false;
+    public bool IsSwing
+    {
+        get { return isSwing; }
+        set { }
+    }
 
     private float swingSpeed = 0.3f;
 
@@ -24,15 +32,21 @@ public class PlayerWeapon : MonoBehaviour
     void SwingSword(float damage)
     {
         this.damage = damage;
+        isSwing = true;
         StartCoroutine(SwingCoroutine(rotateSpeed));
     }
 
     void ChargeSword(float chargingTime)
     {
-        Vector3 swordScale = new Vector3(chargingTime, swordScaleOffset.y, swordScaleOffset.z);
+        float swordScaleX = chargingTime;
+        if (swordScaleX > limitScale)
+        {
+            swordScaleX = limitScale;
+        }
+        Vector3 swordScale = new Vector3(swordScaleX, swordScaleOffset.y, swordScaleOffset.z);
         sword.transform.localScale = swordScale;
         Vector3 swordPos = sword.transform.localPosition;
-        Vector3 movePos = new Vector3(chargingTime / 2, swordPos.y, swordPos.z);
+        Vector3 movePos = new Vector3(swordScaleX / 2, swordPos.y, swordPos.z);
         sword.transform.localPosition = movePos;
     }
 
@@ -54,11 +68,13 @@ public class PlayerWeapon : MonoBehaviour
         while (time < swingSpeed)
         {
             time += Time.deltaTime;
-            float currentAngle = Mathf.Lerp(startAngle, endAngle, time / duration);
+            float currentAngle = Mathf.Lerp(startAngle, endAngle, time / swingSpeed);
             swordHandle.transform.localRotation = Quaternion.Euler(new Vector3(0f, currentAngle, 0f));
             yield return null;
         }
         sword.transform.localScale = swordScaleOffset;
         sword.transform.localPosition = new Vector3(swordScaleOffset.x / 2, 0f, 0f);
+
+        isSwing = false;
     }
 }
