@@ -7,6 +7,7 @@ public class PlayerWeapon : MonoBehaviour
     public float damage = 0f;
     public float rotateSpeed = 0.2f;
     public float limitScale = 10f;
+    //private float weaponCoolDown = 0.5f;
 
     private bool isRightSwing = true;
     private bool isSwing = false;
@@ -38,6 +39,7 @@ public class PlayerWeapon : MonoBehaviour
 
     void ChargeSword(float chargingTime)
     {
+        swordHandle.transform.localRotation = Quaternion.Euler(Vector3.zero);
         float swordScaleX = chargingTime;
         if (swordScaleX > limitScale)
         {
@@ -53,16 +55,16 @@ public class PlayerWeapon : MonoBehaviour
     IEnumerator SwingCoroutine(float duration)
     {
         float startAngle = swordHandle.transform.localEulerAngles.y;
-        float endAngle = startAngle + 180f;
-        if (isRightSwing)
-        {
-            endAngle = startAngle - 180f;
-            isRightSwing = false;
-        }
-        else
-        {
-            isRightSwing = true;
-        }
+        float endAngle = startAngle - 180f;
+        // if (isRightSwing)
+        // {
+        //     endAngle = startAngle - 180f;
+        //     isRightSwing = false;
+        // }
+        // else
+        // {
+        //     isRightSwing = true;
+        // }
 
         float time = 0f;
         while (time < swingSpeed)

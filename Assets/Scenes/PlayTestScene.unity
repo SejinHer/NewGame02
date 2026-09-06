@@ -1749,7 +1749,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f27ae84f462f3d408eb7b93b014dc79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  health: 10
+  health: 100
   target: {fileID: 1711192071}
   moveSpeed: 3
   chaseDistance: 2
@@ -1903,7 +1903,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f27ae84f462f3d408eb7b93b014dc79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  health: 10
+  health: 100
   target: {fileID: 1711192071}
   moveSpeed: 3
   chaseDistance: 2
@@ -2396,7 +2396,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f27ae84f462f3d408eb7b93b014dc79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  health: 10
+  health: 100
   target: {fileID: 1711192071}
   moveSpeed: 3
   chaseDistance: 2
@@ -2697,7 +2697,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f27ae84f462f3d408eb7b93b014dc79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  health: 10
+  health: 100
   target: {fileID: 1711192071}
   moveSpeed: 3
   chaseDistance: 2
