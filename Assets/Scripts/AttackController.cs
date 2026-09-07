@@ -7,22 +7,41 @@ public class AttackController : MonoBehaviour
     public float attackForce = 5f;
     public float attackDuration = 0.3f;
     public float attackCooldown = 1f;
-    private bool isAttacking = false;
+    private float attackTime = 0f;
+    private bool canAttack = true;
     public GameObject weapon;
+    public Vector3 posOffset = new Vector3(0, 0, 0.5f);
 
+    private void Awake()
+    {
+        weapon.SetActive(false);
+    }
     public void Poke()
     {
-        if (!isAttacking)
+        if (canAttack)
         {
-            isAttacking = true;
+            canAttack = false;
             StartCoroutine(PokeCoroutine());
         }
     }
 
+    void Update()
+    {
+        attackTime += Time.deltaTime;
+        if (attackTime > attackCooldown)
+        {
+            attackTime = 0f;
+            canAttack = true;
+        }
+
+    }
+
     IEnumerator PokeCoroutine()
     {
+        weapon.SetActive(true);
         float elapsedTime = 0f;
         Vector3 originalPosition = weapon.transform.localPosition;
+
         while (elapsedTime < attackDuration)
         {
             float t = elapsedTime / attackDuration;
@@ -30,10 +49,9 @@ public class AttackController : MonoBehaviour
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        yield return new WaitForSeconds(attackCooldown);
-        weapon.transform.localPosition = originalPosition;
 
-        isAttacking = false;
+        weapon.SetActive(false);
+        weapon.transform.localPosition = posOffset;
     }
 
 

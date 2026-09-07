@@ -2,18 +2,17 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System;
 using System.Collections;
+using TMPro;
+using UnityEngine.Rendering;
 
 public class PlayerHp : MonoBehaviour
 {
+    public TextMeshProUGUI hpText;
     public float maxHp = 100;
     public float hp = 100;
     private InputActions inputActions;
-
-    public float consumePerSecond = 10f;
     private bool isCharging = false;
     private float chargingTime;
-
-    public float chargeDamage = 0f;
 
     public event Action<float> OnPlayerSwing;
     public event Action<float> OnPlayerCharging;
@@ -41,6 +40,8 @@ public class PlayerHp : MonoBehaviour
     {
         inputActions.Player.Attack.started += StartBloodSword;
         inputActions.Player.Attack.canceled += SwingBloodSword;
+
+        UpdateHpUI();
     }
 
     private void StartBloodSword(InputAction.CallbackContext ctx)
@@ -52,25 +53,18 @@ public class PlayerHp : MonoBehaviour
     {
         isCharging = false;
         Debug.Log($"Charging Time : {chargingTime}");
-        chargeDamage = chargingTime * 2f;
-        OnPlayerSwing?.Invoke(chargeDamage);
+        OnPlayerSwing?.Invoke(chargingTime);
         chargingTime = 0;
-        chargeDamage = 0f;
     }
 
     private void Update()
     {
         if (isCharging)
         {
-            chargingTime += consumePerSecond * Time.deltaTime;
+            chargingTime += Time.deltaTime;
             //hp -= consumePerSecond * Time.deltaTime;
             OnPlayerCharging?.Invoke(chargingTime);
 
-        }
-
-        if (hp <= 0)
-        {
-            Debug.Log("Game Over");
         }
 
         if (isUnbeatable)
@@ -84,11 +78,17 @@ public class PlayerHp : MonoBehaviour
         }
     }
 
+    void UpdateHpUI()
+    {
+        hpText.text = $"{hp} / {maxHp}";
+    }
+
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Weapon"))
+        if (other.gameObject.CompareTag("Weapon") && !isUnbeatable)
         {
-            hp -= other.GetComponent<AttackController>().damage;
+            hp -= other.GetComponentInParent<AttackController>().damage;
+            UpdateHpUI();
             isUnbeatable = true;
             if (hp <= 0f)
             {
